@@ -3,6 +3,21 @@ let countriesData;
 let shortListCountriesData;
 const numberOfCountries = 12;
 
+// getting all countries data on loading the main page from REST countries API.
+$(document).ready(function () {
+  $.ajax({
+    url: "https://restcountries.eu/rest/v2/all",
+    type: "GET",
+    success: function (response, textStatus, xhr) {
+      countriesData = response;
+      shortListCountriesData = getRandom(countriesData, numberOfCountries);
+      if (xhr.status === 200) { postCountries(shortListCountriesData); }
+    },
+    error: function (error) {
+      console.log(error)
+    }
+  })
+});
 // Return given number of random countries data.
 function getRandom(countries, number) {
   let data = [];
@@ -37,21 +52,6 @@ function fancyNumbers( number) {
   return newNumber;
 }
 
-// getting all countries data on loading the main page from REST countries API.
-$(document).ready(function () {
-  $.ajax({
-    url: "https://restcountries.eu/rest/v2/all",
-    type: "GET",
-    success: function (response, textStatus, xhr) {
-      countriesData = response;
-      shortListCountriesData = getRandom(countriesData, numberOfCountries);
-      if (xhr.status === 200) {postCountries(shortListCountriesData);}
-    },
-    error: function (error) {
-      console.log(error)
-    }
-  })
-})
 
 //searching the full country name based on their alpha3code.
 function getBorderCountryName(searchTerm) {

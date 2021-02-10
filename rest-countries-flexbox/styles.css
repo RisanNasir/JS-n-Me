@@ -41,8 +41,9 @@ h1 {
   font-size: 20px;
   font-weight: 800;
 }
-h5 {
+header .gitLink {
   color: #7e9cff;
+  font-size: 30px;
 }
 .mode {
   margin-right: 11%;
