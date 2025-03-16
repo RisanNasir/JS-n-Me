@@ -1,12 +1,12 @@
 
 let countriesData;
 let shortListCountriesData;
-const numberOfCountries = 12;
+const numberOfCountries = 20;
 
 // getting all countries data on loading the main page from REST countries API.
 $(document).ready(function () {
   $.ajax({
-    url: "https://restcountries.eu/rest/v2/all",
+    url: "https://restcountries.com/v3.1/all",
     type: "GET",
     success: function (response, textStatus, xhr) {
       countriesData = response;
@@ -57,9 +57,9 @@ function fancyNumbers( number) {
 function getBorderCountryName(searchTerm) {
   let countryName = '';
   countriesData.map(element => {
-    const alpha3Code = element.alpha3Code.toLocaleLowerCase('en-US');
+    const alpha3Code = element.cca3.toLocaleLowerCase('en-US');
     if (!(alpha3Code.localeCompare(searchTerm.toLocaleLowerCase('en-US')))) {
-      countryName = element.name;
+      countryName = element.name.common;
       return;
     }
   });
@@ -69,7 +69,7 @@ function getBorderCountryName(searchTerm) {
 function getBorderCountry(e, searchTerm) {
   let data = [];
   countriesData.map(element => {
-    const alpha3Code = element.alpha3Code.toLocaleLowerCase('en-US');
+    const alpha3Code = element.cca3.toLocaleLowerCase('en-US');
     if (!(alpha3Code.localeCompare(searchTerm.toLocaleLowerCase('en-US')))) {
       data.push(element);
       return;
@@ -88,45 +88,55 @@ function postCountries(data) {
       const p = fancyNumbers(data[i].population.toString()); // adding comma in population to readability.
       dataStr += `
       <div class="card">
-        <a class="countryFlag" href="#" onclick="postCountries(searchCountryByFullname('${data[i].name}'))">
-          <img class="flag inverted" src="${data[i].flag}" >
-        </a>
+        <div style="height=225px">
+          <a class="countryFlag" href="#" onclick="postCountries(searchCountryByFullname('${data[i].name.common}'))">
+            <img class="flag inverted" src="${data[i].flags.png}" >
+          </a>
+        </div>
         <div class="cardDetail">
-          <h2>${data[i].name.substr(0, 52)}</h2>
-          <p>Population: ${p} </p>
-          <p>Region: ${data[i].region} </p>
-          <p>Capital: ${data[i].capital} </p>
+          <h2>${data[i].name.common.substr(0, 52)}</h2>
+          <p>Population: <span>${p}</span> </p>
+          <p>Region: <span>${data[i].region} </span></p>
+          <p>Sub Region: <span>${data[i].subregion} </span></p>
+          <p>Capital: <span>${data[i].capital} </span></p>
         </div>
       </div>`;
     }
   } else {
     const p = fancyNumbers(data[0].population.toString());
     let borderBtn = ``; 
-    // traversing all countries on the borders of a specific one.    
-    for (let j = 0; j < data[0].borders.length; j++) { 
+    // traversing all countries on the borders of a specific one.   
+    let len = 0;
+    if(data[0].borders === undefined){
+      len = 0;
+    } else {
+      len = data[0].borders.length;
+    }
+    for (let j = 0; j < len; j++) { 
       const countryName = getBorderCountryName(data[0].borders[j]);
       borderBtn += `
-      <button class="borderBtn" type="button" onclick="getBorderCountry(this, '${data[0].borders[j]}')">${countryName.substr(0,15)}</button>
+      <button class="borderBtn" type="button" onclick="getBorderCountry(this, '${data[0].borders[j]}')">${countryName}</button>
       `;
     } // adding some extra details in a full card.
     dataStr = `
-    <div class="btndiv"><button class="backbtn" onclick="resetPage()">Back</button></div>
+    <div class="btndiv"><button class="backbtn" onclick="resetPage()"><i class="fa-solid fa-arrow-left"></i>Back</button></div>
     <div class="fullCard">
-      <img class="fullFlag" src="${data[0].flag}" >
+      <img class="fullFlag" src="${data[0].flags.png}" >
       <div class="fullDetails">
-        <h2>${data[0].name}</h2>
+        <h2>${data[0].name.common}</h2>
         <div class="inFullDetails">
           <div class="leftDetails">
-            <p>Native Name: <span>${data[0].nativeName}</span> </p>
+            <p>Official Name: <span>${data[0].name.official}</span> </p>
             <p>Population: <span> ${p} </span></p>
             <p>Region:  <span>${data[0].region}</span> </p>
             <p>Sub Region:  <span>${data[0].subregion}</span> </p>
             <p>Capital:  <span>${data[0].capital}</span> </p>
           </div>
           <div class="rightDetails">
-            <p>Top Level Domain:  <span>${data[0].topLevelDomain}</span> </p>
-            <p>Currencies:  <span>${getAll(data[0].currencies)}</span> </p>
+            <p>Top Level Domain:  <span>${data[0].tld}</span> </p>
+            <p>Currencies:  <span>${getCurrencies(data[0].currencies)}</span> </p>
             <p>Languages:  <span>${getAll(data[0].languages)}</span></p>
+            <p>Area:  <span>${fancyNumbers(data[0].area.toString())}</span> km²</p>
           </div>
         </div>
         <div class="borderBtnDiv"><p>Border Countries: </p> <div><span>${borderBtn}</span></div></div>
@@ -135,15 +145,19 @@ function postCountries(data) {
   }
   $(".cardContainer").html(dataStr);
 }
-
+function getCurrencies(data){
+  /* {"HKD": {"name": "Hong Kong dollar","symbol": "$"}} */
+  return ((Object.entries(data))[0][1].symbol + ' - ' + (Object.entries(data))[0][1].name);
+}
 function resetPage() {
-  const input = document.querySelector('#inputSearch').value;
+  /* const input = document.querySelector('#inputSearch').value;
   if (!input) {
     postCountries(shortListCountriesData);
   } else {
     postCountries(searchCountry(input));
-  }
-  
+  } */
+  document.querySelector('#inputSearch').value = '';
+  postCountries(shortListCountriesData);
 }
 
 
@@ -167,9 +181,10 @@ flags.forEach(flag => {
 //Traverse in the objects array of some internal fields of data (currencies + languages).
 function getAll(data) {
   let arr = [];
-  data.forEach(e => {
-    arr.push(e.name);
-  });
+  for (const [key, value] of Object.entries(data)) {
+    arr.push(value)
+  }
+  
   return arr;
 }
 
@@ -177,7 +192,7 @@ function getAll(data) {
 function searchCountry(searchTerm) {
   var data = [];
   countriesData.map(element => {
-    const name = element.name.toLocaleLowerCase('en-US');
+    const name = element.name.common.toLocaleLowerCase('en-US');
     if (name.includes(searchTerm.toLocaleLowerCase('en-US'))) {
       data.push(element);
     }
@@ -188,7 +203,7 @@ function searchCountry(searchTerm) {
 function searchCountryByFullname(searchTerm) {
   var data = [];
   countriesData.map(element => {
-    const name = element.name.toLocaleLowerCase('en-US');
+    const name = element.name.common.toLocaleLowerCase('en-US');
     if (name === searchTerm.toLocaleLowerCase('en-US')) {
       data.push(element);
     }
