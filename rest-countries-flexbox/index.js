@@ -94,7 +94,7 @@ function postCountries(data) {
           </a>
         </div>
         <div class="cardDetail">
-          <h2>${data[i].name.common.substr(0, 52)}</h2>
+          <h2>${data[i].name.common.substr(0, 25)}</h2>
           <p>Population: <span>${p}</span> </p>
           <p>Region: <span>${data[i].region} </span></p>
           <p>Sub Region: <span>${data[i].subregion} </span></p>
@@ -118,28 +118,31 @@ function postCountries(data) {
       <button class="borderBtn" type="button" onclick="getBorderCountry(this, '${data[0].borders[j]}')">${countryName}</button>
       `;
     } // adding some extra details in a full card.
+    // <i class="fa-solid fa-arrow-left"></i> ⬅️👈←
     dataStr = `
-    <div class="btndiv"><button class="backbtn" onclick="resetPage()"><i class="fa-solid fa-arrow-left"></i>Back</button></div>
+    <div class="btndiv"><button class="backbtn" onclick="resetPage()">👈  Back</button></div>
     <div class="fullCard">
-      <img class="fullFlag" src="${data[0].flags.png}" >
+      <div style="align-content: center; width: 100%;margin-right: 30px;">
+        <img class="fullFlag" src="${data[0].flags.png}" >
+      </div>
       <div class="fullDetails">
         <h2>${data[0].name.common}</h2>
         <div class="inFullDetails">
           <div class="leftDetails">
-            <p>Official Name: <span>${data[0].name.official}</span> </p>
-            <p>Population: <span> ${p} </span></p>
-            <p>Region:  <span>${data[0].region}</span> </p>
-            <p>Sub Region:  <span>${data[0].subregion}</span> </p>
-            <p>Capital:  <span>${data[0].capital}</span> </p>
+            <p>Official Name:   <span>${data[0].name.official}</span> </p>
+            <p>Population:   <span> ${p} </span></p>
+            <p>Region:    <span>${data[0].region}</span> </p>
+            <p>Sub Region:    <span>${data[0].subregion}</span> </p>
+            <p>Capital:    <span>${data[0].capital}</span> </p>
           </div>
           <div class="rightDetails">
-            <p>Top Level Domain:  <span>${data[0].tld}</span> </p>
-            <p>Currencies:  <span>${getCurrencies(data[0].currencies)}</span> </p>
-            <p>Languages:  <span>${getAll(data[0].languages)}</span></p>
-            <p>Area:  <span>${fancyNumbers(data[0].area.toString())}</span> km²</p>
+            <p>Top Level Domain:    <span>${data[0].tld}</span> </p>
+            <p>Currencies:    <span>${getCurrencies(data[0].currencies)}</span> </p>
+            <p>Languages:    <span>${getAll(data[0].languages)}</span></p>
+            <p>Area:    <span>${fancyNumbers(data[0].area.toString())}</span> km²</p>
           </div>
         </div>
-        <div class="borderBtnDiv"><p>Border Countries: </p> <div><span>${borderBtn}</span></div></div>
+        <div class="borderBtnDiv"><p>Border Countries:   </p> <div><span>${borderBtn}</span></div></div>
       </div>
     </div>`;
   }
@@ -174,8 +177,6 @@ flags.forEach(flag => {
     });
   }
 });
-
-
 
 
 //Traverse in the objects array of some internal fields of data (currencies + languages).
@@ -220,7 +221,7 @@ function searchByRegion(region) {
       data.push(element);
     }
   });
-
+  document.querySelector('#inputSearch').value = '';
   return getRandom(data, numberOfCountries);
 }
 
@@ -248,11 +249,13 @@ const regions = document.querySelectorAll('.searchByRegion');
 regions.forEach(region => {
   if (region.addEventListener) {
     region.addEventListener('click', (event) => {
-      postCountries(searchByRegion(region.innerHTML));
+      shortListCountriesData = searchByRegion(region.innerHTML);
+      postCountries(shortListCountriesData);
     });
   } else {
     region.attachEvent('onclick', () => {
-      postCountries(searchByRegion(region.innerHTML));
+      shortListCountriesData = searchByRegion(region.innerHTML);
+      postCountries(shortListCountriesData);
     });
   }
 });

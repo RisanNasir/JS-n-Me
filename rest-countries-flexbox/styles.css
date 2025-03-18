@@ -50,7 +50,7 @@ header .gitLink {
   display: flex;
   /* justify-content: space-between; */
   align-items: center;
-  width: 120px;
+  width: 122px;
   color: var(--text);
 }
 header a {
@@ -248,42 +248,50 @@ footer, .push {
   display: flex;
   /* align-items: flex-end; */
   justify-content: space-between;
+  align-content: center;
   /* flex-wrap: wrap; */
   /* border: solid thin rgb(0, 0, 26); */
 }
 .fullFlag {
-  width: 30vw;
-  height: 20vw;
+  width: 100%;
   vertical-align: middle;
   margin: 0 auto auto 0;
-  /* object-fit: cover; */
+  height: 350px;
+  object-fit: fill;
   /* min-width: 465px; */
 }
 .fullDetails {
-  width: 55%;
+  width: 100%;
   display: flex;
-  /* flex-wrap: wrap; */
+  flex-wrap: wrap;
   flex-direction: column;
-  justify-content: initial;
+  justify-content: center;
   margin-top: 20px;
+  margin-left: 30px;
 }
 .fullDetails h2 {
-  padding-left: 60px;
-  padding-right: 60px;
-  font-size: 2rem;
+  /* padding-left: 60px; */
+  /* padding-right: 60px; */
+  font-size: 30px;
   color: var(--text);
   margin-bottom: .5rem;
-  font-weight: 500;
+  font-weight: 800;
   line-height: 1.2;
 }
 
 .fullDetails p {
-  padding: 12px 0 0 60px;
+  /* padding: 12px 0 0 60px; */
   color: var(--text);
   font-weight: 600;
-  font-size: 1.5rem;
+  font-size: 20px;
   outline: none;
   font-family: 'Nunito Sans', sans-serif;
+}
+.fullDetails span{
+  font-size: 18px;
+  color: var(--text);
+  padding: 5px;
+  font-weight: 500;
 }
 .borderBtn {
   border: solid thin rgb(146, 146, 146);
@@ -315,12 +323,11 @@ footer, .push {
 .borderBtnDiv div {
   display: flex;
   flex-wrap: wrap;
-  padding-left: 60px;
 }
 
 .inFullDetails {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .flag {
@@ -329,14 +336,14 @@ footer, .push {
   border-radius: 6px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  object-fit:cover;
+  /* object-fit:cover; */
 }
 .cardDetail {
   padding: 30px;
   height: 180px;
 }
 .cardDetail h2 {
-  font-size: 18px;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--text);
   /* padding-bottom: 3px; */
@@ -388,8 +395,7 @@ span {
   }
     
   .fullFlag {
-    width: 80vw;
-    height: 50vw;
+    width: 100%;
     margin: auto;
   }
 
